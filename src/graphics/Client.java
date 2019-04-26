@@ -83,6 +83,13 @@ public class Client extends Application {
 			}
 			showPlayers();
 		});
+		try {
+			out.writeObject(j1);
+			out.reset();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
 		showPlayers();
 		stage.setScene(scene);
 		stage.setTitle("Client");
@@ -99,8 +106,8 @@ public class Client extends Application {
 				if (in != null) {
 					try {
 						j2 = (Player) in.readObject();
-					} catch (ClassNotFoundException | IOException e) {
-						e.printStackTrace();
+					} catch (ClassNotFoundException | IOException e) { //Connection stopped / reset
+						//e.printStackTrace();
 						System.exit(1);
 					}
 					showPlayers();
