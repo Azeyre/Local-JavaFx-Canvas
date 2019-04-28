@@ -2,6 +2,8 @@ package graphics;
 
 import java.io.Serializable;
 
+import javafx.scene.paint.Color;
+
 public class Player implements Serializable {
 
 	/**
@@ -12,7 +14,7 @@ public class Player implements Serializable {
 	private double x,y;
 	private static final int SIZE = 20;
 
-	Player(int id, double x, double y){
+	public Player(int id, double x, double y){
 		this.x = x;
 		this.y = y;
 		this.id = id;
@@ -45,5 +47,4 @@ public class Player implements Serializable {
 	public String toString() {
 		return "Id : " + id + " :[x:" + x + ", y:" + y + "]";
 	}
-	
 }

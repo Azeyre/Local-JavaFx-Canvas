@@ -23,10 +23,11 @@ public class Client extends Application {
 	
 	private static String IP;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		IP = (String) JOptionPane.showInputDialog(null,"Ip du serveur : ","IP",JOptionPane.QUESTION_MESSAGE,null,null,"");
 		Application.launch();
 		timer.cancel();
+		if(socket != null) socket.close();
 		System.exit(0);
 	}
 
@@ -40,14 +41,24 @@ public class Client extends Application {
 	boolean isServer = true; //false if Client
 	ObjectOutputStream out;
 	ObjectInputStream in;
-	Socket socket;
+	static Socket socket;
 
 	static Timer timer;
 
-	public void createClient() throws UnknownHostException, IOException {
-		socket = new Socket(IP, PORT);
-		out = new ObjectOutputStream(socket.getOutputStream());
-		in = new ObjectInputStream(socket.getInputStream());
+	public void createClient() {
+		try {
+			socket = new Socket(IP, PORT);
+		} catch (IOException e) {
+			System.err.println("Cannot connect to the server, closing app.");
+			System.exit(1);
+		}
+		try {
+			out = new ObjectOutputStream(socket.getOutputStream());
+			in = new ObjectInputStream(socket.getInputStream());
+		} catch (IOException e) {
+			System.err.println("Cannot create input/output stream, closing app.");
+			System.exit(1);
+		}
 		// socket.setTcpNoDelay(true);
 	}
 
@@ -103,7 +114,7 @@ public class Client extends Application {
 
 			@Override
 			public void run() {
-				if (in != null) {
+				if (socket.isConnected() && in != null) {
 					try {
 						j2 = (Player) in.readObject();
 					} catch (ClassNotFoundException | IOException e) { //Connection stopped / reset
@@ -111,6 +122,8 @@ public class Client extends Application {
 						System.exit(1);
 					}
 					showPlayers();
+				} else {
+					timer.cancel();
 				}
 			}
 
